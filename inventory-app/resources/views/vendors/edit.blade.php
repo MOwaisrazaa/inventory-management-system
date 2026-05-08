@@ -1,0 +1,65 @@
+@extends('layout')
+
+@section('title', 'Edit Vendor')
+
+@section('content')
+<div class="mb-4">
+    <h2><i class="fas fa-edit"></i> Edit Vendor</h2>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form action="{{ route('vendors.update', $vendor) }}" method="POST">
+            @csrf
+            @method('PUT')
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Vendor Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                           id="name" name="name" value="{{ old('name', $vendor->name) }}" required>
+                    @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="phone" class="form-label">Phone <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('phone') is-invalid @enderror" 
+                           id="phone" name="phone" value="{{ old('phone', $vendor->phone) }}" required>
+                    @error('phone')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                       id="email" name="email" value="{{ old('email', $vendor->email) }}">
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control @error('address') is-invalid @enderror" 
+                          id="address" name="address" rows="3">{{ old('address', $vendor->address) }}</textarea>
+                @error('address')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Update Vendor
+                </button>
+                <a href="{{ route('vendors.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
