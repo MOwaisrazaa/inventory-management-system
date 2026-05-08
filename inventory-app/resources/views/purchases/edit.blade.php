@@ -56,7 +56,7 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="rate" class="form-label">Rate (₹) <span class="text-danger">*</span></label>
+                    <label for="rate" class="form-label">Rate (Rs.) <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" class="form-control @error('rate') is-invalid @enderror" 
                            id="rate" name="rate" value="{{ old('rate', $purchase->rate) }}" min="0" required>
                     @error('rate')
@@ -65,7 +65,7 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="total_amount" class="form-label">Total Amount (₹)</label>
+                    <label for="total_amount" class="form-label">Total Amount (Rs.)</label>
                     <input type="text" class="form-control bg-light" id="total_amount" readonly value="{{ $purchase->amount }}">
                 </div>
             </div>

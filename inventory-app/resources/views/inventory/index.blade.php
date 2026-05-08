@@ -30,7 +30,7 @@
         <div class="card bg-success text-white">
             <div class="card-body">
                 <h6 class="card-title"><i class="fas fa-dollar-sign"></i> Inventory Value</h6>
-                <h2 class="mb-0">₹{{ number_format($stats['total_inventory_value'], 2) }}</h2>
+                <h2 class="mb-0">Rs {{  number_format($stats['total_inventory_value'], 2) }}</h2>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
         <div class="card bg-info text-white">
             <div class="card-body">
                 <h6 class="card-title"><i class="fas fa-chart-line"></i> Total Sales</h6>
-                <h2 class="mb-0">₹{{ number_format($stats['total_sales_value'], 2) }}</h2>
+                <h2 class="mb-0">Rs {{  number_format($stats['total_sales_value'], 2) }}</h2>
             </div>
         </div>
     </div>
@@ -93,8 +93,8 @@
                     <tr>
                         <td><span class="badge bg-secondary">{{ $item->sku }}</span></td>
                         <td><strong>{{ $item->name }}</strong></td>
-                        <td>₹{{ number_format($item->purchase_price, 2) }}</td>
-                        <td>₹{{ number_format($item->selling_price, 2) }}</td>
+                        <td>Rs {{  number_format($item->purchase_price, 2) }}</td>
+                        <td>Rs {{  number_format($item->selling_price, 2) }}</td>
                         <td>
                             @if($item->quantity < 10)
                                 <span class="badge bg-danger">{{ $item->quantity }}</span>
@@ -105,7 +105,7 @@
                             @endif
                         </td>
                         <td>{{ $item->unit }}</td>
-                        <td>₹{{ number_format($item->quantity * $item->purchase_price, 2) }}</td>
+                        <td>Rs {{  number_format($item->quantity * $item->purchase_price, 2) }}</td>
                         <td>
                             @if($item->quantity < 10)
                                 <span class="badge bg-danger">Low Stock</span>
@@ -160,7 +160,7 @@
                                 <td>{{ $purchase->item->name }}</td>
                                 <td>{{ $purchase->vendor->name }}</td>
                                 <td>{{ $purchase->quantity }}</td>
-                                <td>₹{{ number_format($purchase->amount, 2) }}</td>
+                                <td>Rs {{  number_format($purchase->amount, 2) }}</td>
                             </tr>
                             @empty
                             <tr>
@@ -204,7 +204,7 @@
                                 <td>{{ $sale->item->name }}</td>
                                 <td>{{ $sale->customer->name }}</td>
                                 <td>{{ $sale->quantity }}</td>
-                                <td>₹{{ number_format($sale->amount, 2) }}</td>
+                                <td>Rs {{  number_format($sale->amount, 2) }}</td>
                             </tr>
                             @empty
                             <tr>

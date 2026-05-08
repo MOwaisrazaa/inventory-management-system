@@ -39,8 +39,8 @@
                             @endif
                         </td>
                         <td>{{ $purchase->quantity }}</td>
-                        <td>₹{{ number_format($purchase->rate, 2) }}</td>
-                        <td><strong>₹{{ number_format($purchase->amount, 2) }}</strong></td>
+                        <td>Rs {{  number_format($purchase->rate, 2) }}</td>
+                        <td><strong>Rs {{  number_format($purchase->amount, 2) }}</strong></td>
                         <td>
                             <a href="{{ route('purchases.edit', $purchase) }}" class="btn btn-sm btn-warning">
                                 <i class="fas fa-edit"></i>

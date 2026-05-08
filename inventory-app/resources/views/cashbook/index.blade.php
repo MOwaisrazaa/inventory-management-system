@@ -14,19 +14,19 @@
     <div class="col-md-4">
         <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
             <h5>Total Receipts</h5>
-            <div class="value">₹{{ number_format($totalReceipts, 2) }}</div>
+            <div class="value">Rs {{  number_format($totalReceipts, 2) }}</div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
             <h5>Total Payments</h5>
-            <div class="value">₹{{ number_format($totalPayments, 2) }}</div>
+            <div class="value">Rs {{  number_format($totalPayments, 2) }}</div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="stat-card" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
             <h5>Balance</h5>
-            <div class="value">₹{{ number_format($balance, 2) }}</div>
+            <div class="value">Rs {{  number_format($balance, 2) }}</div>
         </div>
     </div>
 </div>
@@ -54,7 +54,7 @@
                                 <td>{{ $receipt->transaction_date->format('d-m-Y') }}</td>
                                 <td>{{ $receipt->from_to }}</td>
                                 <td>{{ $receipt->description }}</td>
-                                <td><strong>₹{{ number_format($receipt->amount, 2) }}</strong></td>
+                                <td><strong>Rs {{  number_format($receipt->amount, 2) }}</strong></td>
                                 <td>
                                     <a href="{{ route('cashbook.edit', $receipt) }}" class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
@@ -101,7 +101,7 @@
                                 <td>{{ $payment->transaction_date->format('d-m-Y') }}</td>
                                 <td>{{ $payment->from_to }}</td>
                                 <td>{{ $payment->description }}</td>
-                                <td><strong>₹{{ number_format($payment->amount, 2) }}</strong></td>
+                                <td><strong>Rs {{  number_format($payment->amount, 2) }}</strong></td>
                                 <td>
                                     <a href="{{ route('cashbook.edit', $payment) }}" class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>

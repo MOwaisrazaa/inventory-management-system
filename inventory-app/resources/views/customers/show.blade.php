@@ -62,12 +62,12 @@
                 </div>
                 <div class="mb-3">
                     <h6>Total Amount</h6>
-                    <h3 class="text-success">₹{{ number_format($customer->sales->sum('amount'), 2) }}</h3>
+                    <h3 class="text-success">Rs {{  number_format($customer->sales->sum('amount'), 2) }}</h3>
                 </div>
                 <div>
                     <h6>Average Sale</h6>
                     <h3 class="text-info">
-                        ₹{{ $customer->sales->count() > 0 ? number_format($customer->sales->avg('amount'), 2) : '0.00' }}
+                        Rs {{  $customer->sales->count() > 0 ? number_format($customer->sales->avg('amount'), 2) : '0.00' }}
                     </h3>
                 </div>
             </div>
@@ -107,8 +107,8 @@
                             @endif
                         </td>
                         <td>{{ $sale->quantity }} {{ $sale->item->unit }}</td>
-                        <td>₹{{ number_format($sale->rate, 2) }}</td>
-                        <td>₹{{ number_format($sale->amount, 2) }}</td>
+                        <td>Rs {{  number_format($sale->rate, 2) }}</td>
+                        <td>Rs {{  number_format($sale->amount, 2) }}</td>
                         <td>
                             @if($sale->status == 'completed')
                                 <span class="badge bg-success">Completed</span>

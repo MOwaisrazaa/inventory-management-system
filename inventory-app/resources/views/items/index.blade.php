@@ -32,8 +32,8 @@
                         <td><span class="badge bg-secondary">{{ $item->sku }}</span></td>
                         <td><strong>{{ $item->name }}</strong></td>
                         <td>{{ Str::limit($item->description, 50) }}</td>
-                        <td>₹{{ number_format($item->purchase_price, 2) }}</td>
-                        <td>₹{{ number_format($item->selling_price, 2) }}</td>
+                        <td>Rs {{  number_format($item->purchase_price, 2) }}</td>
+                        <td>Rs {{  number_format($item->selling_price, 2) }}</td>
                         <td>
                             @if($item->quantity < 10)
                                 <span class="badge bg-danger">{{ $item->quantity }}</span>

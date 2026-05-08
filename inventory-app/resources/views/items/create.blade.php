@@ -45,7 +45,7 @@
 
             <div class="row">
                 <div class="col-md-4 mb-3">
-                    <label for="purchase_price" class="form-label">Purchase Price (₹) <span class="text-danger">*</span></label>
+                    <label for="purchase_price" class="form-label">Purchase Price (Rs.) <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" class="form-control @error('purchase_price') is-invalid @enderror" 
                            id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" required>
                     @error('purchase_price')
@@ -54,7 +54,7 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="selling_price" class="form-label">Selling Price (₹) <span class="text-danger">*</span></label>
+                    <label for="selling_price" class="form-label">Selling Price (Rs.) <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" class="form-control @error('selling_price') is-invalid @enderror" 
                            id="selling_price" name="selling_price" value="{{ old('selling_price') }}" required>
                     @error('selling_price')

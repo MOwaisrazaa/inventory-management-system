@@ -9,13 +9,13 @@
     <div class="col-md-3">
         <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <h5>Total Purchases</h5>
-            <div class="value">₹{{ number_format($totalPurchases, 2) }}</div>
+            <div class="value">Rs {{  number_format($totalPurchases, 2) }}</div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
             <h5>Total Sales</h5>
-            <div class="value">₹{{ number_format($totalSales, 2) }}</div>
+            <div class="value">Rs {{  number_format($totalSales, 2) }}</div>
         </div>
     </div>
     <div class="col-md-3">
@@ -27,7 +27,7 @@
     <div class="col-md-3">
         <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
             <h5>Cash Balance</h5>
-            <div class="value">₹{{ number_format($cashBalance, 2) }}</div>
+            <div class="value">Rs {{  number_format($cashBalance, 2) }}</div>
         </div>
     </div>
 </div>
@@ -57,8 +57,8 @@
                                 <td>{{ $purchase->vendor->name }}</td>
                                 <td>{{ $purchase->item->name }}</td>
                                 <td>{{ $purchase->quantity }}</td>
-                                <td>₹{{ number_format($purchase->rate, 2) }}</td>
-                                <td><strong>₹{{ number_format($purchase->amount, 2) }}</strong></td>
+                                <td>Rs {{  number_format($purchase->rate, 2) }}</td>
+                                <td><strong>Rs {{  number_format($purchase->amount, 2) }}</strong></td>
                             </tr>
                         @empty
                             <tr>
@@ -95,8 +95,8 @@
                                 <td>{{ $sale->customer->name }}</td>
                                 <td>{{ $sale->item->name }}</td>
                                 <td>{{ $sale->quantity }}</td>
-                                <td>₹{{ number_format($sale->rate, 2) }}</td>
-                                <td><strong>₹{{ number_format($sale->amount, 2) }}</strong></td>
+                                <td>Rs {{  number_format($sale->rate, 2) }}</td>
+                                <td><strong>Rs {{  number_format($sale->amount, 2) }}</strong></td>
                             </tr>
                         @empty
                             <tr>

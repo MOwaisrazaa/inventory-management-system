@@ -61,7 +61,7 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="purchase_price" class="form-label">Purchase Price (₹) <span class="text-danger">*</span></label>
+                    <label for="purchase_price" class="form-label">Purchase Price (Rs.) <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" class="form-control @error('purchase_price') is-invalid @enderror" 
                            id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" 
                            min="0" placeholder="Enter purchase price" required>
@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="sale_price" class="form-label">Sale Price (₹) <span class="text-danger">*</span></label>
+                    <label for="sale_price" class="form-label">Sale Price (Rs.) <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" class="form-control @error('sale_price') is-invalid @enderror" 
                            id="sale_price" name="sale_price" value="{{ old('sale_price') }}" 
                            min="0" placeholder="Enter sale price" required>
@@ -92,7 +92,7 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="rate" class="form-label">Rate (₹) <span class="text-danger">*</span></label>
+                    <label for="rate" class="form-label">Rate (Rs.) <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" class="form-control @error('rate') is-invalid @enderror" 
                            id="rate" name="rate" value="{{ old('rate') }}" min="0" placeholder="Purchase rate" required>
                     @error('rate')
@@ -102,7 +102,7 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label for="total_amount" class="form-label">Total Amount (₹)</label>
+                    <label for="total_amount" class="form-label">Total Amount (Rs.)</label>
                     <input type="text" class="form-control bg-light" id="total_amount" readonly value="0.00">
                 </div>
             </div>
