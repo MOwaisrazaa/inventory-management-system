@@ -54,7 +54,7 @@ class PurchaseController extends Controller
                 'name' => $validated['item_name'],
                 'sku' => $sku,
                 'purchase_price' => $validated['purchase_price'],
-                'sale_price' => $validated['sale_price'],
+                'selling_price' => $validated['sale_price'],
                 'quantity' => $validated['quantity'],
             ]);
         } else {
