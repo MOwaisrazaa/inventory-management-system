@@ -13,20 +13,21 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="purchase_date" class="form-label">Purchase Date</label>
+                    <label for="purchase_date" class="form-label">Purchase Date <span class="text-danger">*</span></label>
                     <input type="date" class="form-control @error('purchase_date') is-invalid @enderror" 
-                           id="purchase_date" name="purchase_date" value="{{ $purchase->purchase_date->format('Y-m-d') }}" required>
+                           id="purchase_date" name="purchase_date" value="{{ old('purchase_date', $purchase->purchase_date->format('Y-m-d')) }}" required>
                     @error('purchase_date')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="vendor_id" class="form-label">Vendor</label>
+                    <label for="vendor_id" class="form-label">Vendor <span class="text-danger">*</span></label>
                     <select class="form-control @error('vendor_id') is-invalid @enderror" 
                             id="vendor_id" name="vendor_id" required>
+                        <option value="">Select Vendor</option>
                         @foreach($vendors as $vendor)
-                            <option value="{{ $vendor->id }}" @selected($purchase->vendor_id == $vendor->id)>
+                            <option value="{{ $vendor->id }}" @selected(old('vendor_id', $purchase->vendor_id) == $vendor->id)>
                                 {{ $vendor->name }}
                             </option>
                         @endforeach
@@ -37,45 +38,35 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="item_id" class="form-label">Item</label>
-                    <select class="form-control @error('item_id') is-invalid @enderror" 
-                            id="item_id" name="item_id" required>
-                        @foreach($items as $item)
-                            <option value="{{ $item->id }}" @selected($purchase->item_id == $item->id)>
-                                {{ $item->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('item_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> <strong>Current Item:</strong> {{ $purchase->item->name }}
+                @if($purchase->item->sku)
+                    [{{ $purchase->item->sku }}]
+                @endif
+            </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="quantity" class="form-label">Quantity</label>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
                     <input type="number" class="form-control @error('quantity') is-invalid @enderror" 
-                           id="quantity" name="quantity" value="{{ $purchase->quantity }}" required>
+                           id="quantity" name="quantity" value="{{ old('quantity', $purchase->quantity) }}" min="1" required>
                     @error('quantity')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="rate" class="form-label">Rate</label>
+                <div class="col-md-4 mb-3">
+                    <label for="rate" class="form-label">Rate (₹) <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" class="form-control @error('rate') is-invalid @enderror" 
-                           id="rate" name="rate" value="{{ $purchase->rate }}" required>
+                           id="rate" name="rate" value="{{ old('rate', $purchase->rate) }}" min="0" required>
                     @error('rate')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="notes" class="form-label">Notes</label>
-                    <input type="text" class="form-control" id="notes" name="notes" value="{{ $purchase->notes }}">
+                <div class="col-md-4 mb-3">
+                    <label for="total_amount" class="form-label">Total Amount (₹)</label>
+                    <input type="text" class="form-control bg-light" id="total_amount" readonly value="{{ $purchase->amount }}">
                 </div>
             </div>
 
@@ -90,4 +81,20 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Calculate total amount
+    function calculateTotal() {
+        const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+        const rate = parseFloat(document.getElementById('rate').value) || 0;
+        const total = quantity * rate;
+        document.getElementById('total_amount').value = total.toFixed(2);
+    }
+
+    document.getElementById('quantity').addEventListener('input', calculateTotal);
+    document.getElementById('rate').addEventListener('input', calculateTotal);
+    
+    // Calculate on page load
+    calculateTotal();
+</script>
 @endsection

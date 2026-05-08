@@ -89,11 +89,19 @@ class PurchaseController extends Controller
         $validated = $request->validate([
             'purchase_date' => 'required|date',
             'vendor_id' => 'required|exists:vendors,id',
-            'item_id' => 'required|exists:items,id',
             'quantity' => 'required|integer|min:1',
             'rate' => 'required|numeric|min:0',
         ]);
 
+        // Calculate the difference in quantity to update inventory
+        $quantityDiff = $validated['quantity'] - $purchase->quantity;
+        
+        // Update the item quantity
+        $item = Item::find($purchase->item_id);
+        $item->quantity += $quantityDiff;
+        $item->save();
+
+        // Update purchase
         $validated['amount'] = $validated['quantity'] * $validated['rate'];
         $purchase->update($validated);
 
