@@ -38,46 +38,32 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="item_name" class="form-label">Item Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control @error('item_name') is-invalid @enderror" 
-                           id="item_name" name="item_name" value="{{ old('item_name') }}" 
-                           placeholder="Enter item name" required>
-                    @error('item_name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="item_sku" class="form-label">SKU (Optional)</label>
-                    <input type="text" class="form-control @error('item_sku') is-invalid @enderror" 
-                           id="item_sku" name="item_sku" value="{{ old('item_sku') }}" 
-                           placeholder="Enter SKU code">
-                    @error('item_sku')
+                <div class="col-md-12 mb-3">
+                    <label for="item_id" class="form-label">Item <span class="text-danger">*</span></label>
+                    <select class="form-control @error('item_id') is-invalid @enderror" 
+                            id="item_id" name="item_id" required>
+                        <option value="">Select Item</option>
+                        @foreach($items as $item)
+                            <option value="{{ $item->id }}" 
+                                    data-price="{{ $item->purchase_price }}"
+                                    data-sku="{{ $item->sku }}"
+                                    @selected(old('item_id') == $item->id)>
+                                {{ $item->name }} [{{ $item->sku }}] (Stock: {{ $item->quantity }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('item_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="purchase_price" class="form-label">Purchase Price (Rs.) <span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" class="form-control @error('purchase_price') is-invalid @enderror" 
-                           id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" 
-                           min="0" placeholder="Enter purchase price" required>
-                    @error('purchase_price')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label for="sale_price" class="form-label">Sale Price (Rs.) <span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" class="form-control @error('sale_price') is-invalid @enderror" 
-                           id="sale_price" name="sale_price" value="{{ old('sale_price') }}" 
-                           min="0" placeholder="Enter sale price" required>
-                    @error('sale_price')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="col-md-12 mb-3" id="selected_item_info" style="display: none;">
+                    <div class="alert alert-info">
+                        <strong>Selected Item:</strong> <span id="item_name_display"></span>
+                        <span id="item_sku_display"> | <strong>Item No:</strong> <span id="sku_value"></span></span>
+                    </div>
                 </div>
             </div>
 
@@ -94,21 +80,16 @@
                 <div class="col-md-4 mb-3">
                     <label for="rate" class="form-label">Rate (Rs.) <span class="text-danger">*</span></label>
                     <input type="number" step="0.01" class="form-control @error('rate') is-invalid @enderror" 
-                           id="rate" name="rate" value="{{ old('rate') }}" min="0" placeholder="Purchase rate" required>
+                           id="rate" name="rate" value="{{ old('rate') }}" min="0" required>
                     @error('rate')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                    <small class="text-muted">This will be used for this purchase only</small>
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <label for="total_amount" class="form-label">Total Amount (Rs.)</label>
                     <input type="text" class="form-control bg-light" id="total_amount" readonly value="0.00">
                 </div>
-            </div>
-
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> <strong>Note:</strong> When you save this purchase, the item will be automatically added to the Items page if it doesn't exist, or the quantity will be updated if it already exists.
             </div>
 
             <div class="d-flex gap-2">
@@ -124,12 +105,31 @@
 </div>
 
 <script>
-    // Auto-fill rate from purchase price
-    document.getElementById('purchase_price').addEventListener('input', function() {
-        const purchasePrice = this.value;
-        if (purchasePrice) {
-            document.getElementById('rate').value = purchasePrice;
+    // Auto-fill rate when item is selected
+    document.getElementById('item_id').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const price = selectedOption.getAttribute('data-price');
+        const sku = selectedOption.getAttribute('data-sku');
+        const itemName = selectedOption.text;
+        
+        if (price) {
+            document.getElementById('rate').value = price;
             calculateTotal();
+        }
+        
+        // Show selected item info
+        if (this.value) {
+            document.getElementById('selected_item_info').style.display = 'block';
+            document.getElementById('item_name_display').textContent = itemName;
+            
+            if (sku) {
+                document.getElementById('item_sku_display').style.display = 'inline';
+                document.getElementById('sku_value').textContent = sku;
+            } else {
+                document.getElementById('item_sku_display').style.display = 'none';
+            }
+        } else {
+            document.getElementById('selected_item_info').style.display = 'none';
         }
     });
 

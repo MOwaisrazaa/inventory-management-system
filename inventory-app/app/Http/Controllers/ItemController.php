@@ -22,13 +22,17 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'nullable|string|unique:items,sku',
             'description' => 'nullable|string',
             'purchase_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'unit' => 'required|string|max:50'
         ]);
+
+        // Auto-generate item number
+        $lastItem = Item::orderBy('id', 'desc')->first();
+        $nextNumber = $lastItem ? $lastItem->id + 1 : 1;
+        $validated['sku'] = 'ITEM-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
         Item::create($validated);
 
@@ -45,7 +49,6 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'nullable|string|unique:items,sku,' . $item->id,
             'description' => 'nullable|string',
             'purchase_price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
@@ -53,6 +56,7 @@ class ItemController extends Controller
             'unit' => 'required|string|max:50'
         ]);
 
+        // Keep existing item number (sku)
         $item->update($validated);
 
         return redirect()->route('items.index')

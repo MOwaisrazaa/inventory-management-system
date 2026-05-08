@@ -12,6 +12,10 @@ return new class extends Migration
             $table->id();
             $table->date('transaction_date');
             $table->enum('type', ['receipt', 'payment']);
+            $table->enum('payee_type', ['customer', 'vendor'])->nullable();
+            $table->foreignId('customer_id')->nullable()->constrained('customers')->onDelete('set null');
+            $table->foreignId('vendor_id')->nullable()->constrained('vendors')->onDelete('set null');
+            $table->foreignId('item_id')->nullable()->constrained('items')->onDelete('set null');
             $table->string('from_to')->nullable();
             $table->string('description');
             $table->decimal('amount', 12, 2);

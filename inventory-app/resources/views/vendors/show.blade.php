@@ -87,7 +87,7 @@
                     <tr>
                         <th>Date</th>
                         <th>Item</th>
-                        <th>SKU</th>
+                        <th>Item No</th>
                         <th>Quantity</th>
                         <th>Unit Price</th>
                         <th>Total Amount</th>

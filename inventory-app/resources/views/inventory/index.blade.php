@@ -50,7 +50,7 @@
         <form method="GET" action="{{ route('inventory.index') }}" class="row g-3">
             <div class="col-md-6">
                 <input type="text" name="search" class="form-control" 
-                       placeholder="Search by item name or SKU..." 
+                       placeholder="Search by item name or Item No..." 
                        value="{{ request('search') }}">
             </div>
             <div class="col-md-3">
@@ -78,7 +78,7 @@
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>SKU</th>
+                        <th>Item No</th>
                         <th>Item Name</th>
                         <th>Purchase Price</th>
                         <th>Selling Price</th>

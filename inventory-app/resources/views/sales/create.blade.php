@@ -67,7 +67,7 @@
                 <div class="col-md-12 mb-3" id="selected_item_info" style="display: none;">
                     <div class="alert alert-info">
                         <strong>Selected Item:</strong> <span id="item_name_display"></span>
-                        <span id="item_sku_display" style="display: none;"> | <strong>SKU:</strong> <span id="sku_value"></span></span>
+                        <span id="item_sku_display" style="display: none;"> | <strong>Item No:</strong> <span id="sku_value"></span></span>
                     </div>
                 </div>
             </div>

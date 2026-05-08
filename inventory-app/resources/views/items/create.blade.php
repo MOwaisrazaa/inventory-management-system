@@ -23,12 +23,12 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label for="sku" class="form-label">SKU (Optional)</label>
-                    <input type="text" class="form-control @error('sku') is-invalid @enderror" 
-                           id="sku" name="sku" value="{{ old('sku') }}" 
+                    <label for="Item No" class="form-label">Item No (Auto-generated if empty)</label>
+                    <input type="text" class="form-control @error('Item No') is-invalid @enderror" 
+                           id="Item No" name="Item No" value="{{ old('Item No') }}" 
                            placeholder="e.g., PROD-001, RED-SM">
                     <small class="text-muted">Unique code for product identification (color, size, variant)</small>
-                    @error('sku')
+                    @error('Item No')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

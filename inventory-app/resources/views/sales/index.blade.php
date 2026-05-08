@@ -18,7 +18,7 @@
                     <th>Date</th>
                     <th>Customer</th>
                     <th>Item</th>
-                    <th>SKU</th>
+                    <th>Item No</th>
                     <th>Qty</th>
                     <th>Rate</th>
                     <th>Amount</th>

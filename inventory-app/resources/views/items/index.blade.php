@@ -16,7 +16,7 @@
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>SKU</th>
+                        <th>Item No</th>
                         <th>Name</th>
                         <th>Description</th>
                         <th>Purchase Price</th>
