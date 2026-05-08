@@ -34,16 +34,25 @@ class PurchaseController extends Controller
             'rate' => 'required|numeric|min:0',
         ]);
 
+        // Normalize empty SKU to null
+        $sku = !empty($validated['item_sku']) ? $validated['item_sku'] : null;
+
         // Check if item already exists by name and SKU
         $item = Item::where('name', $validated['item_name'])
-            ->where('sku', $validated['item_sku'])
+            ->where(function($query) use ($sku) {
+                if ($sku === null) {
+                    $query->whereNull('sku');
+                } else {
+                    $query->where('sku', $sku);
+                }
+            })
             ->first();
 
         if (!$item) {
             // Create new item
             $item = Item::create([
                 'name' => $validated['item_name'],
-                'sku' => $validated['item_sku'],
+                'sku' => $sku,
                 'purchase_price' => $validated['purchase_price'],
                 'sale_price' => $validated['sale_price'],
                 'quantity' => $validated['quantity'],
