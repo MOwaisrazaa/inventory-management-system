@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
-use App\Models\Customer;
-use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,19 +19,17 @@ class SheetController extends Controller
 
         // Saved purchases for this date
         $purchases = DB::table('sheet_purchases')
-            ->leftJoin('vendors', 'sheet_purchases.vendor_id', '=', 'vendors.id')
-            ->leftJoin('items',   'sheet_purchases.item_id',   '=', 'items.id')
+            ->leftJoin('items', 'sheet_purchases.item_id', '=', 'items.id')
             ->where('sheet_purchases.date', $date)
-            ->select('sheet_purchases.*', 'vendors.name as vendor_name', 'items.name as item_name')
+            ->select('sheet_purchases.*', 'items.name as item_name')
             ->orderBy('sheet_purchases.id')
             ->get();
 
         // Saved sales for this date
         $sales = DB::table('sheet_sales')
-            ->leftJoin('customers', 'sheet_sales.customer_id', '=', 'customers.id')
-            ->leftJoin('items',     'sheet_sales.item_id',     '=', 'items.id')
+            ->leftJoin('items', 'sheet_sales.item_id', '=', 'items.id')
             ->where('sheet_sales.date', $date)
-            ->select('sheet_sales.*', 'customers.name as customer_name', 'items.name as item_name')
+            ->select('sheet_sales.*', 'items.name as item_name')
             ->orderBy('sheet_sales.id')
             ->get();
 
@@ -64,7 +60,7 @@ class SheetController extends Controller
             ->value('date');
 
         return view('sheets.index', compact(
-            'date', 'items', 'customers', 'vendors',
+            'date', 'items',
             'purchases', 'sales', 'receipts', 'payments',
             'prevDate', 'nextDate'
         ));
@@ -78,13 +74,13 @@ class SheetController extends Controller
         // Purchase rows
         if ($request->has('purchase')) {
             foreach ($request->input('purchase') as $row) {
-                $vendorId = !empty($row['vendor_id']) ? $row['vendor_id'] : null;
-                $itemId   = !empty($row['item_id'])   ? $row['item_id']   : null;
-                $qty      = (int)   ($row['quantity'] ?? 0);
-                $rate     = (float) ($row['rate']     ?? 0);
-                if (!$vendorId && !$itemId && $qty == 0 && $rate == 0) continue;
+                $vendorName = trim($row['vendor_name'] ?? '');
+                $itemId     = !empty($row['item_id']) ? $row['item_id'] : null;
+                $qty        = (int)   ($row['quantity'] ?? 0);
+                $rate       = (float) ($row['rate']     ?? 0);
+                if (empty($vendorName) && !$itemId && $qty == 0 && $rate == 0) continue;
                 DB::table('sheet_purchases')->insert([
-                    'date' => $date, 'vendor_id' => $vendorId, 'item_id' => $itemId,
+                    'date' => $date, 'vendor_name' => $vendorName, 'item_id' => $itemId,
                     'quantity' => $qty, 'rate' => $rate, 'amount' => $qty * $rate,
                     'created_at' => now(), 'updated_at' => now(),
                 ]);
@@ -94,13 +90,13 @@ class SheetController extends Controller
         // Sale rows
         if ($request->has('sale')) {
             foreach ($request->input('sale') as $row) {
-                $customerId = !empty($row['customer_id']) ? $row['customer_id'] : null;
-                $itemId     = !empty($row['item_id'])     ? $row['item_id']     : null;
-                $qty        = (int)   ($row['quantity'] ?? 0);
-                $rate       = (float) ($row['rate']     ?? 0);
-                if (!$customerId && !$itemId && $qty == 0 && $rate == 0) continue;
+                $customerName = trim($row['customer_name'] ?? '');
+                $itemId       = !empty($row['item_id']) ? $row['item_id'] : null;
+                $qty          = (int)   ($row['quantity'] ?? 0);
+                $rate         = (float) ($row['rate']     ?? 0);
+                if (empty($customerName) && !$itemId && $qty == 0 && $rate == 0) continue;
                 DB::table('sheet_sales')->insert([
-                    'date' => $date, 'customer_id' => $customerId, 'item_id' => $itemId,
+                    'date' => $date, 'customer_name' => $customerName, 'item_id' => $itemId,
                     'quantity' => $qty, 'rate' => $rate, 'amount' => $qty * $rate,
                     'created_at' => now(), 'updated_at' => now(),
                 ]);

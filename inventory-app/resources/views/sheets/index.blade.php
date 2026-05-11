@@ -258,12 +258,8 @@
                 <tr class="purchase-row">
                     <td class="text-center" style="font-size:11px;color:#aaa;" id="pIdx1">{{ $purchases->count()+1 }}</td>
                     <td>
-                        <select name="purchase[0][vendor_id]" class="form-select p-vendor">
-                            <option value="">-- Vendor --</option>
-                            @foreach($vendors as $v)
-                                <option value="{{ $v->id }}">{{ $v->name }}</option>
-                            @endforeach
-                        </select>
+                        <input type="text" name="purchase[0][vendor_name]" class="form-control p-vendor"
+                               placeholder="Vendor name..." autocomplete="off">
                     </td>
                     <td>
                         <select name="purchase[0][item_id]" class="form-select p-item">
@@ -334,12 +330,8 @@
                 <tr class="sale-row">
                     <td class="text-center" style="font-size:11px;color:#aaa;">{{ $sales->count()+1 }}</td>
                     <td>
-                        <select name="sale[0][customer_id]" class="form-select s-customer">
-                            <option value="">-- Customer --</option>
-                            @foreach($customers as $c)
-                                <option value="{{ $c->id }}">{{ $c->name }}</option>
-                            @endforeach
-                        </select>
+                        <input type="text" name="sale[0][customer_name]" class="form-control s-customer"
+                               placeholder="Customer name..." autocomplete="off">
                     </td>
                     <td>
                         <select name="sale[0][item_id]" class="form-select s-item">
@@ -600,7 +592,7 @@ document.addEventListener('input', function(e) {
 });
 
 // ── Add rows ──────────────────────────────────────────────────
-function addRow(tbodyId, prefix, counter, savedCount, cloneClass) {
+function addRow(tbodyId, prefix, counter, savedCount) {
     const tbody = document.getElementById(tbodyId);
     const tmpl  = tbody.querySelector('tr').cloneNode(true);
     tmpl.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
