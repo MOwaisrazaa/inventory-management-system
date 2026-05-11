@@ -112,48 +112,44 @@
     </a>
 
     <div class="nav-links">
-        <a href="{{ route('dashboard') }}"
-           class="@if(Route::currentRouteName() == 'dashboard') active @endif">
-            <i class="fas fa-home"></i> Dashboard
-        </a>
         <a href="{{ route('items.index') }}"
            class="@if(str_contains(Route::currentRouteName(), 'items')) active @endif">
             <i class="fas fa-box"></i> Items
-        </a>
-        <a href="{{ route('vendors.index') }}"
-           class="@if(str_contains(Route::currentRouteName(), 'vendors')) active @endif">
-            <i class="fas fa-truck"></i> Vendors
-        </a>
-        <a href="{{ route('customers.index') }}"
-           class="@if(str_contains(Route::currentRouteName(), 'customers')) active @endif">
-            <i class="fas fa-users"></i> Customers
-        </a>
-        <a href="{{ route('inventory.index') }}"
-           class="@if(str_contains(Route::currentRouteName(), 'inventory')) active @endif">
-            <i class="fas fa-warehouse"></i> Inventory
-        </a>
-        <a href="{{ route('purchases.index') }}"
-           class="@if(str_contains(Route::currentRouteName(), 'purchases')) active @endif">
-            <i class="fas fa-shopping-cart"></i> Purchases
-        </a>
-        <a href="{{ route('sales.index') }}"
-           class="@if(str_contains(Route::currentRouteName(), 'sales')) active @endif">
-            <i class="fas fa-cash-register"></i> Sales
-        </a>
-        <a href="{{ route('cashbook.index') }}"
-           class="@if(str_contains(Route::currentRouteName(), 'cashbook')) active @endif">
-            <i class="fas fa-book"></i> Cash Book
         </a>
         <a href="{{ route('sheets.index') }}"
            class="@if(str_contains(Route::currentRouteName(), 'sheets')) active @endif">
             <i class="fas fa-table"></i> Daily Sheet
         </a>
+
+        {{-- Hidden links (kept in code) --}}
+        {{--
+        <a href="{{ route('dashboard') }}" class="@if(Route::currentRouteName() == 'dashboard') active @endif">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="{{ route('vendors.index') }}" class="@if(str_contains(Route::currentRouteName(), 'vendors')) active @endif">
+            <i class="fas fa-truck"></i> Vendors
+        </a>
+        <a href="{{ route('customers.index') }}" class="@if(str_contains(Route::currentRouteName(), 'customers')) active @endif">
+            <i class="fas fa-users"></i> Customers
+        </a>
+        <a href="{{ route('inventory.index') }}" class="@if(str_contains(Route::currentRouteName(), 'inventory')) active @endif">
+            <i class="fas fa-warehouse"></i> Inventory
+        </a>
+        <a href="{{ route('purchases.index') }}" class="@if(str_contains(Route::currentRouteName(), 'purchases')) active @endif">
+            <i class="fas fa-shopping-cart"></i> Purchases
+        </a>
+        <a href="{{ route('sales.index') }}" class="@if(str_contains(Route::currentRouteName(), 'sales')) active @endif">
+            <i class="fas fa-cash-register"></i> Sales
+        </a>
+        <a href="{{ route('cashbook.index') }}" class="@if(str_contains(Route::currentRouteName(), 'cashbook')) active @endif">
+            <i class="fas fa-book"></i> Cash Book
+        </a>
         @if(auth()->user()->isAdmin())
-        <a href="{{ route('users.index') }}"
-           class="@if(str_contains(Route::currentRouteName(), 'users')) active @endif">
+        <a href="{{ route('users.index') }}" class="@if(str_contains(Route::currentRouteName(), 'users')) active @endif">
             <i class="fas fa-users-cog"></i> Users
         </a>
         @endif
+        --}}
     </div>
 
     <div class="user-area">
