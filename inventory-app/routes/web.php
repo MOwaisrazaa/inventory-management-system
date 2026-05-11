@@ -11,6 +11,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SheetController;
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -29,6 +30,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('purchases', PurchaseController::class);
     Route::resource('sales', SaleController::class);
     Route::resource('cashbook', CashBookController::class);
+
+    // Sheet Routes - single page with prev/next navigation
+    Route::get('/sheets', [SheetController::class, 'index'])->name('sheets.index');
+    Route::post('/sheets', [SheetController::class, 'store'])->name('sheets.store');
+    Route::get('/sheets/create', [SheetController::class, 'create'])->name('sheets.create');
+    Route::get('/sheets/list', [SheetController::class, 'list'])->name('sheets.list');
 
     // Admin Only Routes
     Route::middleware(['admin'])->group(function () {
