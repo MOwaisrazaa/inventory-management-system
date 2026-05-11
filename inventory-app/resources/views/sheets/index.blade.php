@@ -2,19 +2,6 @@
 @section('title', 'Daily Sheet')
 @section('content')
 <style>
-/* ── Page Header ─────────────────────────────────────── */
-.sheet-header {
-    background: #2c3e50;
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 8px;
-    margin-bottom: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.sheet-header h5 { margin: 0; font-size: 16px; }
-
 /* ── Date Nav Bar ────────────────────────────────────── */
 .date-nav {
     background: #fff;
@@ -180,12 +167,6 @@
     margin: 18px 0 14px;
 }
 </style>
-
-{{-- ══ PAGE HEADER ══════════════════════════════════════════ --}}
-<div class="sheet-header">
-    <h5><i class="fas fa-table"></i> Daily Sale / Purchase Sheet</h5>
-    <span style="font-size:12px; opacity:.8;">{{ date('l, d F Y', strtotime($date)) }}</span>
-</div>
 
 {{-- ══ DATE NAVIGATION ══════════════════════════════════════ --}}
 <div class="date-nav">
