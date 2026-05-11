@@ -110,6 +110,9 @@
                 <a href="{{ route('cashbook.index') }}" class="@if(str_contains(Route::currentRouteName(), 'cashbook')) active @endif">
                     <i class="fas fa-book"></i> Cash Book
                 </a>
+                <a href="{{ route('sheets.index') }}" class="@if(str_contains(Route::currentRouteName(), 'sheets')) active @endif">
+                    <i class="fas fa-table"></i> Daily Sheet
+                </a>
 
                 @if(auth()->user()->isAdmin())
                 <hr style="border-color: rgba(255,255,255,0.2);">

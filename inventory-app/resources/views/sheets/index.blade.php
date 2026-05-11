@@ -131,6 +131,9 @@
 /* saved rows */
 .stbl .saved-row td { background: #f9fffe; }
 .stbl .saved-row:hover td { background: #eafaf1; }
+/* checked row */
+.stbl .row-checked td { background: #d5f5e3 !important; }
+.stbl .row-checked:hover td { background: #abebc6 !important; }
 
 /* ── Add row btn ─────────────────────────────────────── */
 .add-btn {
@@ -239,11 +242,12 @@
             <thead>
                 <tr>
                     <th width="4%">#</th>
-                    <th width="22%">Vendor</th>
-                    <th width="26%">Item</th>
-                    <th width="11%">Qty</th>
-                    <th width="13%">Rate</th>
-                    <th width="20%">Amount</th>
+                    <th width="21%">Vendor</th>
+                    <th width="25%">Item</th>
+                    <th width="10%">Qty</th>
+                    <th width="12%">Rate</th>
+                    <th width="18%">Amount</th>
+                    <th width="6%">✓</th>
                     <th width="4%"></th>
                 </tr>
             </thead>
@@ -251,13 +255,17 @@
             {{-- Saved rows (read-only display) --}}
             <tbody id="savedPurchaseBody">
             @forelse($purchases as $i => $row)
-                <tr class="saved-row">
+                <tr class="saved-row" data-row-id="p_{{ $row->id }}">
                     <td class="text-center" style="color:#888;">{{ $i+1 }}</td>
                     <td>{{ $row->vendor_name ?? '-' }}</td>
                     <td>{{ $row->item_name ?? '-' }}</td>
                     <td class="text-center">{{ $row->quantity }}</td>
                     <td class="amt-cell">{{ number_format($row->rate,2) }}</td>
                     <td class="amt-cell">{{ number_format($row->amount,2) }}</td>
+                    <td class="text-center">
+                        <input type="checkbox" class="row-check" data-key="p_{{ $row->id }}"
+                               style="width:15px;height:15px;cursor:pointer;">
+                    </td>
                     <td></td>
                 </tr>
             @empty
@@ -287,6 +295,7 @@
                     <td><input type="number" name="purchase[0][quantity]" class="form-control p-qty text-center" min="1" value="1"></td>
                     <td><input type="number" name="purchase[0][rate]" class="form-control p-rate text-end" step="0.01" min="0" value="0"></td>
                     <td class="amt-cell p-amount">0</td>
+                    <td></td>
                     <td><button type="button" class="rm-btn remove-purchase"><i class="fas fa-times"></i></button></td>
                 </tr>
             </tbody>
@@ -295,7 +304,7 @@
                 <tr>
                     <td colspan="5" class="text-end pe-2" style="font-size:12px;">Total:</td>
                     <td class="amt-cell" id="purchaseTotal">{{ number_format($purchases->sum('amount'),2) }}</td>
-                    <td></td>
+                    <td colspan="2"></td>
                 </tr>
             </tfoot>
         </table>
@@ -311,24 +320,29 @@
             <thead>
                 <tr>
                     <th width="4%">#</th>
-                    <th width="22%">Customer</th>
-                    <th width="26%">Item</th>
-                    <th width="11%">Qty</th>
-                    <th width="13%">Rate</th>
-                    <th width="20%">Amount</th>
+                    <th width="21%">Customer</th>
+                    <th width="25%">Item</th>
+                    <th width="10%">Qty</th>
+                    <th width="12%">Rate</th>
+                    <th width="18%">Amount</th>
+                    <th width="6%">✓</th>
                     <th width="4%"></th>
                 </tr>
             </thead>
 
             <tbody id="savedSalesBody">
             @forelse($sales as $i => $row)
-                <tr class="saved-row">
+                <tr class="saved-row" data-row-id="s_{{ $row->id }}">
                     <td class="text-center" style="color:#888;">{{ $i+1 }}</td>
                     <td>{{ $row->customer_name ?? '-' }}</td>
                     <td>{{ $row->item_name ?? '-' }}</td>
                     <td class="text-center">{{ $row->quantity }}</td>
                     <td class="amt-cell">{{ number_format($row->rate,2) }}</td>
                     <td class="amt-cell">{{ number_format($row->amount,2) }}</td>
+                    <td class="text-center">
+                        <input type="checkbox" class="row-check" data-key="s_{{ $row->id }}"
+                               style="width:15px;height:15px;cursor:pointer;">
+                    </td>
                     <td></td>
                 </tr>
             @empty
@@ -357,6 +371,7 @@
                     <td><input type="number" name="sale[0][quantity]" class="form-control s-qty text-center" min="1" value="1"></td>
                     <td><input type="number" name="sale[0][rate]" class="form-control s-rate text-end" step="0.01" min="0" value="0"></td>
                     <td class="amt-cell s-amount">0</td>
+                    <td></td>
                     <td><button type="button" class="rm-btn remove-sale"><i class="fas fa-times"></i></button></td>
                 </tr>
             </tbody>
@@ -365,7 +380,7 @@
                 <tr>
                     <td colspan="5" class="text-end pe-2" style="font-size:12px;">Total:</td>
                     <td class="amt-cell" id="salesTotal">{{ number_format($sales->sum('amount'),2) }}</td>
-                    <td></td>
+                    <td colspan="2"></td>
                 </tr>
             </tfoot>
         </table>
@@ -647,5 +662,26 @@ document.addEventListener('click', function(e) {
         }
     }
 });
+// ── Checkbox persist via localStorage ────────────────────────
+(function initCheckboxes() {
+    document.querySelectorAll('.row-check').forEach(cb => {
+        const key = 'chk_' + cb.dataset.key;
+        // Restore saved state
+        if (localStorage.getItem(key) === '1') {
+            cb.checked = true;
+            cb.closest('tr').classList.add('row-checked');
+        }
+        // Save on change
+        cb.addEventListener('change', function() {
+            if (this.checked) {
+                localStorage.setItem(key, '1');
+                this.closest('tr').classList.add('row-checked');
+            } else {
+                localStorage.removeItem(key);
+                this.closest('tr').classList.remove('row-checked');
+            }
+        });
+    });
+})();
 </script>
 @endsection
