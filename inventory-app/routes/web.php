@@ -20,7 +20,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected Routes (Require Authentication)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', function() {
+        return redirect()->route('sheets.index');
+    })->name('dashboard');
 
     Route::resource('items', ItemController::class);
     Route::resource('vendors', VendorController::class);
@@ -34,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     // Sheet Routes - single page with prev/next navigation
     Route::get('/sheets', [SheetController::class, 'index'])->name('sheets.index');
     Route::post('/sheets', [SheetController::class, 'store'])->name('sheets.store');
+    Route::delete('/sheets/row', [SheetController::class, 'deleteRow'])->name('sheets.deleteRow');
     Route::get('/sheets/create', [SheetController::class, 'create'])->name('sheets.create');
     Route::get('/sheets/list', [SheetController::class, 'list'])->name('sheets.list');
 

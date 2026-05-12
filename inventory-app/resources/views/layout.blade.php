@@ -126,6 +126,9 @@
         <a href="{{ route('dashboard') }}" class="@if(Route::currentRouteName() == 'dashboard') active @endif">
             <i class="fas fa-home"></i> Dashboard
         </a>
+        <a href="{{ route('dashboard') }}" class="@if(Route::currentRouteName() == 'dashboard') active @endif">
+            <i class="fas fa-home"></i> Dashboard
+        </a>
         <a href="{{ route('vendors.index') }}" class="@if(str_contains(Route::currentRouteName(), 'vendors')) active @endif">
             <i class="fas fa-truck"></i> Vendors
         </a>

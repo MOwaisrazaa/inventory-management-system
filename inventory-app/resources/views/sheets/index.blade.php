@@ -115,29 +115,26 @@
 }
 .stbl tfoot .amt-cell { background: #d6eaf8; }
 
-/* saved rows */
+/* ── Rows ────────────────────────────────────────────── */
 .stbl .saved-row td { background: #f9fffe; }
-.stbl .saved-row:hover td { background: #eafaf1; }
-/* checked row */
-.stbl .row-checked td { background: #d5f5e3 !important; }
-.stbl .row-checked:hover td { background: #abebc6 !important; }
+.stbl .saved-row:hover td { background: #f0faf8; }
+/* checked = green highlight */
+.stbl tr.row-checked td { background: #d5f5e3 !important; }
+.stbl tr.row-checked:hover td { background: #abebc6 !important; }
 
-/* ── Add row btn ─────────────────────────────────────── */
-.add-btn {
-    font-size: 11.5px;
-    padding: 3px 10px;
-    margin-top: 4px;
-    border-radius: 4px;
-}
-/* ── Remove btn ──────────────────────────────────────── */
-.rm-btn {
-    background: none;
-    border: none;
-    color: #e74c3c;
+/* ── Checkbox styling ────────────────────────────────── */
+.row-check {
+    width: 16px;
+    height: 16px;
     cursor: pointer;
-    font-size: 13px;
-    padding: 0 3px;
-    line-height: 1;
+    accent-color: #27ae60;
+}
+
+/* ── Add / Remove btns ───────────────────────────────── */
+.add-btn { font-size: 11.5px; padding: 3px 10px; margin-top: 4px; border-radius: 4px; }
+.rm-btn {
+    background: none; border: none; color: #e74c3c;
+    cursor: pointer; font-size: 13px; padding: 0 3px; line-height: 1;
 }
 .rm-btn:hover { color: #c0392b; }
 
@@ -154,18 +151,9 @@
     flex-wrap: wrap;
     gap: 8px;
 }
-.save-bar .totals span {
-    font-size: 12.5px;
-    margin-right: 16px;
-}
+.save-bar .totals span { font-size: 12.5px; margin-right: 16px; }
 .save-bar .totals strong { color: #2c3e50; }
-
-/* ── Divider between sections ────────────────────────── */
-.section-divider {
-    border: none;
-    border-top: 2px solid #ecf0f1;
-    margin: 18px 0 14px;
-}
+.section-divider { border: none; border-top: 2px solid #ecf0f1; margin: 18px 0 14px; }
 </style>
 
 {{-- ══ DATE NAVIGATION ══════════════════════════════════════ --}}
@@ -256,7 +244,7 @@
             {{-- New input rows --}}
             <tbody id="purchaseBody">
                 <tr class="purchase-row">
-                    <td class="text-center" style="font-size:11px;color:#aaa;" id="pIdx1">{{ $purchases->count()+1 }}</td>
+                    <td class="text-center" style="font-size:11px;color:#aaa;">{{ $purchases->count()+1 }}</td>
                     <td>
                         <input type="text" name="purchase[0][vendor_name]" class="form-control p-vendor"
                                placeholder="Vendor name..." autocomplete="off">
@@ -272,7 +260,9 @@
                     <td><input type="number" name="purchase[0][quantity]" class="form-control p-qty text-center" min="1" value="1"></td>
                     <td><input type="number" name="purchase[0][rate]" class="form-control p-rate text-end" step="0.01" min="0" value="0"></td>
                     <td class="amt-cell p-amount">0</td>
-                    <td></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="new-row-check row-check" style="width:16px;height:16px;cursor:pointer;accent-color:#27ae60;">
+                    </td>
                     <td><button type="button" class="rm-btn remove-purchase"><i class="fas fa-times"></i></button></td>
                 </tr>
             </tbody>
@@ -337,14 +327,16 @@
                         <select name="sale[0][item_id]" class="form-select s-item">
                             <option value="">-- Item --</option>
                             @foreach($items as $item)
-                                <option value="{{ $item->id }}" data-price="{{ $item->sale_price }}">{{ $item->name }}</option>
+                                <option value="{{ $item->id }}" data-price="{{ $item->selling_price }}">{{ $item->name }}</option>
                             @endforeach
                         </select>
                     </td>
                     <td><input type="number" name="sale[0][quantity]" class="form-control s-qty text-center" min="1" value="1"></td>
                     <td><input type="number" name="sale[0][rate]" class="form-control s-rate text-end" step="0.01" min="0" value="0"></td>
                     <td class="amt-cell s-amount">0</td>
-                    <td></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="new-row-check row-check" style="width:16px;height:16px;cursor:pointer;accent-color:#27ae60;">
+                    </td>
                     <td><button type="button" class="rm-btn remove-sale"><i class="fas fa-times"></i></button></td>
                 </tr>
             </tbody>
@@ -374,11 +366,12 @@
         <table class="stbl">
             <thead>
                 <tr>
-                    <th width="5%">#</th>
-                    <th width="42%">From</th>
-                    <th width="25%">Status</th>
-                    <th width="24%">Amount</th>
-                    <th width="4%"></th>
+                    <th width="4%">#</th>
+                    <th width="38%">From</th>
+                    <th width="22%">Status</th>
+                    <th width="22%">Amount</th>
+                    <th width="6%">✓</th>
+                    <th width="8%"></th>
                 </tr>
             </thead>
 
@@ -393,6 +386,9 @@
                         </span>
                     </td>
                     <td class="amt-cell">{{ number_format($row->amount,2) }}</td>
+                    <td class="text-center">
+                        <input type="checkbox" class="row-check" data-key="r_{{ $row->id }}" style="width:16px;height:16px;cursor:pointer;accent-color:#8e44ad;">
+                    </td>
                     <td></td>
                 </tr>
             @empty
@@ -410,6 +406,9 @@
                         </select>
                     </td>
                     <td><input type="number" name="receipt[0][amount]" class="form-control r-amount text-end" step="0.01" min="0" value="0"></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="new-row-check row-check" style="width:16px;height:16px;cursor:pointer;accent-color:#8e44ad;">
+                    </td>
                     <td><button type="button" class="rm-btn remove-receipt"><i class="fas fa-times"></i></button></td>
                 </tr>
             </tbody>
@@ -418,7 +417,7 @@
                 <tr>
                     <td colspan="3" class="text-end pe-2" style="font-size:12px;">Total:</td>
                     <td class="amt-cell" id="receiptTotal">{{ number_format($receipts->sum('amount'),2) }}</td>
-                    <td></td>
+                    <td colspan="2"></td>
                 </tr>
             </tfoot>
         </table>
@@ -433,11 +432,12 @@
         <table class="stbl">
             <thead>
                 <tr>
-                    <th width="5%">#</th>
-                    <th width="42%">To</th>
-                    <th width="25%">Status</th>
-                    <th width="24%">Amount</th>
-                    <th width="4%"></th>
+                    <th width="4%">#</th>
+                    <th width="38%">To</th>
+                    <th width="22%">Status</th>
+                    <th width="22%">Amount</th>
+                    <th width="6%">✓</th>
+                    <th width="8%"></th>
                 </tr>
             </thead>
 
@@ -452,6 +452,9 @@
                         </span>
                     </td>
                     <td class="amt-cell">{{ number_format($row->amount,2) }}</td>
+                    <td class="text-center">
+                        <input type="checkbox" class="row-check" data-key="py_{{ $row->id }}" style="width:16px;height:16px;cursor:pointer;accent-color:#e67e22;">
+                    </td>
                     <td></td>
                 </tr>
             @empty
@@ -469,6 +472,9 @@
                         </select>
                     </td>
                     <td><input type="number" name="payment[0][amount]" class="form-control py-amount text-end" step="0.01" min="0" value="0"></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="new-row-check row-check" style="width:16px;height:16px;cursor:pointer;accent-color:#e67e22;">
+                    </td>
                     <td><button type="button" class="rm-btn remove-payment"><i class="fas fa-times"></i></button></td>
                 </tr>
             </tbody>
@@ -477,7 +483,7 @@
                 <tr>
                     <td colspan="3" class="text-end pe-2" style="font-size:12px;">Total:</td>
                     <td class="amt-cell" id="paymentTotal">{{ number_format($payments->sum('amount'),2) }}</td>
-                    <td></td>
+                    <td colspan="2"></td>
                 </tr>
             </tfoot>
         </table>
@@ -600,6 +606,12 @@ function addRow(tbodyId, prefix, counter, savedCount) {
     tmpl.querySelectorAll('input[type=text]').forEach(i => i.value = '');
     if (tmpl.querySelector('.p-amount')) tmpl.querySelector('.p-amount').textContent = '0.00';
     if (tmpl.querySelector('.s-amount')) tmpl.querySelector('.s-amount').textContent = '0.00';
+    // Always uncheck checkbox in cloned row and remove data-key
+    const clonedCb = tmpl.querySelector('.new-row-check');
+    if (clonedCb) {
+        clonedCb.checked = false;
+        clonedCb.removeAttribute('data-key');
+    }
     tmpl.querySelectorAll('[name]').forEach(el => {
         el.name = el.name.replace(new RegExp(prefix + '\\[\\d+\\]'), prefix + '[' + counter + ']');
     });
@@ -612,6 +624,12 @@ document.getElementById('addPurchaseRow').addEventListener('click', () => { pCou
 document.getElementById('addSaleRow').addEventListener('click',     () => { sCount = addRow('salesBody','sale',sCount,savedS); });
 document.getElementById('addReceiptRow').addEventListener('click',  () => { rCount = addRow('receiptBody','receipt',rCount,savedR); });
 document.getElementById('addPaymentRow').addEventListener('click',  () => { pyCount = addRow('paymentBody','payment',pyCount,savedPy); });
+
+// ── Auto-add 4 more rows on load (total 5 empty rows) ─────────
+for (let i = 0; i < 4; i++) { pCount  = addRow('purchaseBody', 'purchase', pCount,  savedP);  }
+for (let i = 0; i < 4; i++) { sCount  = addRow('salesBody',    'sale',     sCount,  savedS);  }
+for (let i = 0; i < 4; i++) { rCount  = addRow('receiptBody',  'receipt',  rCount,  savedR);  }
+for (let i = 0; i < 4; i++) { pyCount = addRow('paymentBody',  'payment',  pyCount, savedPy); }
 
 // ── Remove rows ───────────────────────────────────────────────
 document.addEventListener('click', function(e) {
@@ -635,26 +653,61 @@ document.addEventListener('click', function(e) {
         }
     }
 });
-// ── Checkbox persist via localStorage ────────────────────────
-(function initCheckboxes() {
-    document.querySelectorAll('.row-check').forEach(cb => {
-        const key = 'chk_' + cb.dataset.key;
-        // Restore saved state
-        if (localStorage.getItem(key) === '1') {
+// ── On Submit: disable unchecked new rows so they don't save ──
+document.getElementById('sheetForm').addEventListener('submit', function() {
+    // For each new input tbody, disable all inputs in UNCHECKED rows
+    ['purchaseBody','salesBody','receiptBody','paymentBody'].forEach(function(tbodyId) {
+        const tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+        tbody.querySelectorAll('tr').forEach(function(tr) {
+            const cb = tr.querySelector('.new-row-check');
+            if (cb && !cb.checked) {
+                // Disable all inputs/selects in this row so they won't be submitted
+                tr.querySelectorAll('input, select').forEach(function(el) {
+                    el.disabled = true;
+                });
+            }
+        });
+    });
+});
+// ── Checkbox: localStorage persist ───────────────────────────
+// Saved rows use data-key (e.g. p_5, s_3)
+// New input rows have no data-key - they are always unchecked by default
+function initCheckboxes() {
+    document.querySelectorAll('.row-check[data-key]').forEach(function(cb) {
+        const storageKey = 'chk_' + cb.dataset.key;
+        // Restore state on page load
+        if (localStorage.getItem(storageKey) === '1') {
             cb.checked = true;
             cb.closest('tr').classList.add('row-checked');
+        } else {
+            cb.checked = false;
+            cb.closest('tr').classList.remove('row-checked');
         }
-        // Save on change
+        // Save state on change
         cb.addEventListener('change', function() {
             if (this.checked) {
-                localStorage.setItem(key, '1');
+                localStorage.setItem(storageKey, '1');
                 this.closest('tr').classList.add('row-checked');
             } else {
-                localStorage.removeItem(key);
+                localStorage.removeItem(storageKey);
                 this.closest('tr').classList.remove('row-checked');
             }
         });
     });
-})();
+
+    // New input rows - always unchecked, just handle visual highlight
+    document.querySelectorAll('.new-row-check').forEach(function(cb) {
+        cb.checked = false;
+        cb.addEventListener('change', function() {
+            if (this.checked) {
+                this.closest('tr').classList.add('row-checked');
+            } else {
+                this.closest('tr').classList.remove('row-checked');
+            }
+        });
+    });
+}
+initCheckboxes();
 </script>
 @endsection

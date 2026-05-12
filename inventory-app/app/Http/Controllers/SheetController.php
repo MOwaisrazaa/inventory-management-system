@@ -13,9 +13,7 @@ class SheetController extends Controller
     {
         $date = $request->get('date', date('Y-m-d'));
 
-        $items     = Item::all();
-        $customers = Customer::all();
-        $vendors   = Vendor::all();
+        $items = Item::all();
 
         // Saved purchases for this date
         $purchases = DB::table('sheet_purchases')
@@ -41,20 +39,26 @@ class SheetController extends Controller
         $payments = DB::table('sheet_payments')
             ->where('date', $date)->orderBy('id')->get();
 
-        // Previous date that has any data
-        $prevDate = DB::table('sheet_purchases')->select('date')
+        // Previous date that has any data (most recent date BEFORE current)
+        $allDates = DB::table('sheet_purchases')->select('date')
             ->union(DB::table('sheet_sales')->select('date'))
             ->union(DB::table('sheet_receipts')->select('date'))
-            ->union(DB::table('sheet_payments')->select('date'))
+            ->union(DB::table('sheet_payments')->select('date'));
+
+        $prevDate = DB::table(DB::raw("({$allDates->toSql()}) as all_dates"))
+            ->mergeBindings($allDates)
             ->where('date', '<', $date)
             ->orderBy('date', 'desc')
             ->value('date');
 
-        // Next date that has any data
-        $nextDate = DB::table('sheet_purchases')->select('date')
+        // Next date that has any data (earliest date AFTER current)
+        $allDates2 = DB::table('sheet_purchases')->select('date')
             ->union(DB::table('sheet_sales')->select('date'))
             ->union(DB::table('sheet_receipts')->select('date'))
-            ->union(DB::table('sheet_payments')->select('date'))
+            ->union(DB::table('sheet_payments')->select('date'));
+
+        $nextDate = DB::table(DB::raw("({$allDates2->toSql()}) as all_dates"))
+            ->mergeBindings($allDates2)
             ->where('date', '>', $date)
             ->orderBy('date', 'asc')
             ->value('date');
@@ -78,7 +82,10 @@ class SheetController extends Controller
                 $itemId     = !empty($row['item_id']) ? $row['item_id'] : null;
                 $qty        = (int)   ($row['quantity'] ?? 0);
                 $rate       = (float) ($row['rate']     ?? 0);
-                if (empty($vendorName) && !$itemId && $qty == 0 && $rate == 0) continue;
+                
+                // Skip if completely empty OR if no meaningful data
+                if (empty($vendorName) && !$itemId && $rate == 0) continue;
+                
                 DB::table('sheet_purchases')->insert([
                     'date' => $date, 'vendor_name' => $vendorName, 'item_id' => $itemId,
                     'quantity' => $qty, 'rate' => $rate, 'amount' => $qty * $rate,
@@ -94,7 +101,10 @@ class SheetController extends Controller
                 $itemId       = !empty($row['item_id']) ? $row['item_id'] : null;
                 $qty          = (int)   ($row['quantity'] ?? 0);
                 $rate         = (float) ($row['rate']     ?? 0);
-                if (empty($customerName) && !$itemId && $qty == 0 && $rate == 0) continue;
+                
+                // Skip if completely empty OR if no meaningful data
+                if (empty($customerName) && !$itemId && $rate == 0) continue;
+                
                 DB::table('sheet_sales')->insert([
                     'date' => $date, 'customer_name' => $customerName, 'item_id' => $itemId,
                     'quantity' => $qty, 'rate' => $rate, 'amount' => $qty * $rate,
@@ -109,6 +119,7 @@ class SheetController extends Controller
                 $from   = trim($row['from']   ?? '');
                 $amount = (float) ($row['amount'] ?? 0);
                 $status = $row['status'] ?? 'received';
+                // Skip if from is empty AND amount is 0
                 if (empty($from) && $amount == 0) continue;
                 DB::table('sheet_receipts')->insert([
                     'date' => $date, 'from_party' => $from, 'status' => $status,
@@ -123,6 +134,7 @@ class SheetController extends Controller
                 $to     = trim($row['to']     ?? '');
                 $amount = (float) ($row['amount'] ?? 0);
                 $status = $row['status'] ?? 'paid';
+                // Skip if to is empty AND amount is 0
                 if (empty($to) && $amount == 0) continue;
                 DB::table('sheet_payments')->insert([
                     'date' => $date, 'to_party' => $to, 'status' => $status,
@@ -144,5 +156,22 @@ class SheetController extends Controller
     public function list(Request $request)
     {
         return redirect()->route('sheets.index', ['date' => $request->get('date', date('Y-m-d'))]);
+    }
+
+    // Delete a saved row
+    public function deleteRow(Request $request)
+    {
+        $table = $request->input('table'); // sheet_purchases, sheet_sales, sheet_receipts, sheet_payments
+        $id    = $request->input('id');
+        $date  = $request->input('date', date('Y-m-d'));
+
+        // Validate table name for security
+        $allowedTables = ['sheet_purchases', 'sheet_sales', 'sheet_receipts', 'sheet_payments'];
+        if (in_array($table, $allowedTables)) {
+            DB::table($table)->where('id', $id)->delete();
+        }
+
+        return redirect()->route('sheets.index', ['date' => $date])
+                         ->with('success', 'Row deleted successfully!');
     }
 }
