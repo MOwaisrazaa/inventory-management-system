@@ -62,6 +62,7 @@
 .sec-sale     { background: #27ae60; }
 .sec-receipt  { background: #8e44ad; }
 .sec-payment  { background: #e67e22; }
+.sec-journal  { background: #455a64; }
 
 /* ── Sheet Tables ────────────────────────────────────── */
 .stbl {
@@ -505,6 +506,88 @@
     </div>
 </div>
 
+{{-- ── JOURNAL ENTRY SECTION ────────────────────────────── --}}
+<hr class="section-divider">
+<div class="row g-3">
+    <div class="col-md-12">
+        <span class="sec-label sec-journal"><i class="fas fa-exchange-alt"></i> Journal Entry (Hawala)</span>
+        <table class="stbl">
+            <thead>
+                <tr>
+                    <th width="4%">#</th>
+                    <th width="22%">Debit (Transfer To)</th>
+                    <th width="22%">Credit (Transfer From)</th>
+                    <th width="15%">Amount</th>
+                    <th width="28%">Description</th>
+                    <th width="5%">✓</th>
+                    <th width="4%"></th>
+                </tr>
+            </thead>
+
+            {{-- Saved journal rows --}}
+            <tbody id="savedJournalBody">
+            @forelse($journals as $i => $row)
+                <tr class="saved-row">
+                    <td class="text-center" style="color:#888;">{{ $i+1 }}</td>
+                    <td>{{ $row->debit_party ?? '-' }}</td>
+                    <td>{{ $row->credit_party ?? '-' }}</td>
+                    <td class="amt-cell">{{ number_format($row->amount,2) }}</td>
+                    <td style="font-size:11px; color:#555;">{{ $row->description }}</td>
+                    <td class="text-center">
+                        <input type="checkbox" class="row-check" data-key="j_{{ $row->id }}"
+                               style="width:16px;height:16px;cursor:pointer;accent-color:#455a64;">
+                    </td>
+                    <td></td>
+                </tr>
+            @empty
+            @endforelse
+            </tbody>
+
+            {{-- New input rows --}}
+            <tbody id="journalBody">
+                <tr class="journal-row">
+                    <td class="text-center" style="font-size:11px;color:#aaa;">{{ $journals->count()+1 }}</td>
+                    <td>
+                        <input type="text" name="journal[0][debit_party]" class="form-control j-debit"
+                               list="all-parties-list" placeholder="Debit party..." autocomplete="off">
+                    </td>
+                    <td>
+                        <input type="text" name="journal[0][credit_party]" class="form-control j-credit"
+                               list="all-parties-list" placeholder="Credit party..." autocomplete="off">
+                    </td>
+                    <td><input type="number" name="journal[0][amount]" class="form-control j-amount text-end" step="0.01" min="0" value="0"></td>
+                    <td><input type="text" name="journal[0][description]" class="form-control" placeholder="Description..."></td>
+                    <td class="text-center">
+                        <input type="checkbox" class="new-row-check row-check" style="width:16px;height:16px;cursor:pointer;accent-color:#455a64;">
+                    </td>
+                    <td><button type="button" class="rm-btn remove-journal"><i class="fas fa-times"></i></button></td>
+                </tr>
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end pe-2" style="font-size:12px;">Total:</td>
+                    <td class="amt-cell" id="journalTotal">{{ number_format($journals->sum('amount'),2) }}</td>
+                    <td colspan="3"></td>
+                </tr>
+            </tfoot>
+        </table>
+        <button type="button" class="btn btn-outline-secondary add-btn" id="addJournalRow">
+            <i class="fas fa-plus"></i> Add Row
+        </button>
+    </div>
+</div>
+
+{{-- Datalist: all vendors + customers combined for journal --}}
+<datalist id="all-parties-list">
+    @foreach($vendors as $v)
+        <option value="{{ $v->name }}">
+    @endforeach
+    @foreach($customers as $c)
+        <option value="{{ $c->name }}">
+    @endforeach
+</datalist>
+
 {{-- ── Save Bar ──────────────────────────────────────────── --}}
 <div class="save-bar">
     <div class="totals">
@@ -512,6 +595,7 @@
         <span>Sales: <strong id="sumSales">Rs {{ number_format($sales->sum('amount'),2) }}</strong></span>
         <span>Receipt: <strong id="sumReceipt">Rs {{ number_format($receipts->sum('amount'),2) }}</strong></span>
         <span>Payment: <strong id="sumPayment">Rs {{ number_format($payments->sum('amount'),2) }}</strong></span>
+        <span>Journal: <strong id="sumJournal">Rs {{ number_format($journals->sum('amount'),2) }}</strong></span>
     </div>
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary btn-sm px-4">
@@ -533,11 +617,12 @@
 </form>
 
 <script>
-let pCount = 1, sCount = 1, rCount = 1, pyCount = 1;
+let pCount = 1, sCount = 1, rCount = 1, pyCount = 1, jCount = 1;
 const savedP  = {{ $purchases->count() }};
 const savedS  = {{ $sales->count() }};
 const savedR  = {{ $receipts->count() }};
 const savedPy = {{ $payments->count() }};
+const savedJ  = {{ $journals->count() }};
 
 function fmt(n) {
     return Number(n).toLocaleString('en-PK', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -586,6 +671,13 @@ function totalPy() {
     document.getElementById('sumPayment').textContent = 'Rs ' + fmt(t);
 }
 
+function totalJ() {
+    let t = {{ $journals->sum('amount') }};
+    document.querySelectorAll('#journalBody .j-amount').forEach(i => t += parseFloat(i.value) || 0);
+    document.getElementById('journalTotal').textContent = fmt(t);
+    document.getElementById('sumJournal').textContent = 'Rs ' + fmt(t);
+}
+
 // ── Auto price fill ───────────────────────────────────────────
 document.addEventListener('change', function(e) {
     if (e.target.classList.contains('p-item')) {
@@ -607,6 +699,7 @@ document.addEventListener('input', function(e) {
     if (e.target.classList.contains('s-qty') || e.target.classList.contains('s-rate')) calcS(e.target.closest('tr'));
     if (e.target.classList.contains('r-amount'))  totalR();
     if (e.target.classList.contains('py-amount')) totalPy();
+    if (e.target.classList.contains('j-amount'))  totalJ();
 });
 
 // ── Add rows ──────────────────────────────────────────────────
@@ -632,26 +725,29 @@ function addRow(tbodyId, prefix, counter, savedCount) {
     return counter + 1;
 }
 
-document.getElementById('addPurchaseRow').addEventListener('click', () => { pCount = addRow('purchaseBody','purchase',pCount,savedP); });
-document.getElementById('addSaleRow').addEventListener('click',     () => { sCount = addRow('salesBody','sale',sCount,savedS); });
-document.getElementById('addReceiptRow').addEventListener('click',  () => { rCount = addRow('receiptBody','receipt',rCount,savedR); });
+document.getElementById('addPurchaseRow').addEventListener('click', () => { pCount  = addRow('purchaseBody','purchase',pCount,savedP); });
+document.getElementById('addSaleRow').addEventListener('click',     () => { sCount  = addRow('salesBody','sale',sCount,savedS); });
+document.getElementById('addReceiptRow').addEventListener('click',  () => { rCount  = addRow('receiptBody','receipt',rCount,savedR); });
 document.getElementById('addPaymentRow').addEventListener('click',  () => { pyCount = addRow('paymentBody','payment',pyCount,savedPy); });
+document.getElementById('addJournalRow').addEventListener('click',  () => { jCount  = addRow('journalBody','journal',jCount,savedJ); });
 
 // ── Auto-add 4 more rows on load (total 5 empty rows) ─────────
 for (let i = 0; i < 4; i++) { pCount  = addRow('purchaseBody', 'purchase', pCount,  savedP);  }
 for (let i = 0; i < 4; i++) { sCount  = addRow('salesBody',    'sale',     sCount,  savedS);  }
 for (let i = 0; i < 4; i++) { rCount  = addRow('receiptBody',  'receipt',  rCount,  savedR);  }
 for (let i = 0; i < 4; i++) { pyCount = addRow('paymentBody',  'payment',  pyCount, savedPy); }
+for (let i = 0; i < 4; i++) { jCount  = addRow('journalBody',  'journal',  jCount,  savedJ);  }
 
 // ── Remove rows ───────────────────────────────────────────────
 document.addEventListener('click', function(e) {
     const btn = e.target.closest('.rm-btn');
     if (!btn) return;
     const map = {
-        'remove-purchase': ['purchaseBody', savedP, totalP],
-        'remove-sale':     ['salesBody',    savedS, totalS],
-        'remove-receipt':  ['receiptBody',  savedR, totalR],
+        'remove-purchase': ['purchaseBody', savedP,  totalP],
+        'remove-sale':     ['salesBody',    savedS,  totalS],
+        'remove-receipt':  ['receiptBody',  savedR,  totalR],
         'remove-payment':  ['paymentBody',  savedPy, totalPy],
+        'remove-journal':  ['journalBody',  savedJ,  totalJ],
     };
     for (const [cls, [tbodyId, offset, calcFn]] of Object.entries(map)) {
         if (btn.classList.contains(cls)) {
@@ -668,7 +764,7 @@ document.addEventListener('click', function(e) {
 // ── On Submit: disable unchecked new rows so they don't save ──
 document.getElementById('sheetForm').addEventListener('submit', function() {
     // For each new input tbody, disable all inputs in UNCHECKED rows
-    ['purchaseBody','salesBody','receiptBody','paymentBody'].forEach(function(tbodyId) {
+    ['purchaseBody','salesBody','receiptBody','paymentBody','journalBody'].forEach(function(tbodyId) {
         const tbody = document.getElementById(tbodyId);
         if (!tbody) return;
         tbody.querySelectorAll('tr').forEach(function(tr) {

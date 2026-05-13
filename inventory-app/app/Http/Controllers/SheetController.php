@@ -43,20 +43,25 @@ class SheetController extends Controller
         $payments = DB::table('sheet_payments')
             ->where('date', $date)->orderBy('id')->get();
 
-        // All dates that have any data - simple approach
-        $p = DB::table('sheet_purchases')->distinct()->pluck('date')->toArray();
-        $s = DB::table('sheet_sales')->distinct()->pluck('date')->toArray();
-        $r = DB::table('sheet_receipts')->distinct()->pluck('date')->toArray();
-        $py = DB::table('sheet_payments')->distinct()->pluck('date')->toArray();
+        // Saved journal entries for this date
+        $journals = DB::table('sheet_journals')
+            ->where('date', $date)->orderBy('id')->get();
 
-        $allDates = collect(array_unique(array_merge($p, $s, $r, $py)))->sort()->values();
+        // All dates that have any data - simple approach
+        $p  = DB::table('sheet_purchases')->distinct()->pluck('date')->toArray();
+        $s  = DB::table('sheet_sales')->distinct()->pluck('date')->toArray();
+        $r  = DB::table('sheet_receipts')->distinct()->pluck('date')->toArray();
+        $py = DB::table('sheet_payments')->distinct()->pluck('date')->toArray();
+        $j  = DB::table('sheet_journals')->distinct()->pluck('date')->toArray();
+
+        $allDates = collect(array_unique(array_merge($p, $s, $r, $py, $j)))->sort()->values();
 
         $prevDate = $allDates->filter(fn($d) => $d < $date)->last();
         $nextDate = $allDates->filter(fn($d) => $d > $date)->first();
 
         return view('sheets.index', compact(
             'date', 'items', 'vendors', 'customers',
-            'purchases', 'sales', 'receipts', 'payments',
+            'purchases', 'sales', 'receipts', 'payments', 'journals',
             'prevDate', 'nextDate'
         ));
     }
@@ -130,6 +135,26 @@ class SheetController extends Controller
                 DB::table('sheet_payments')->insert([
                     'date' => $date, 'to_party' => $to, 'status' => $status,
                     'amount' => $amount, 'created_at' => now(), 'updated_at' => now(),
+                ]);
+            }
+        }
+
+        // Journal rows (Hawala entries)
+        if ($request->has('journal')) {
+            foreach ($request->input('journal') as $row) {
+                $debit  = trim($row['debit_party']  ?? '');
+                $credit = trim($row['credit_party'] ?? '');
+                $amount = (float) ($row['amount']      ?? 0);
+                $desc   = trim($row['description']  ?? '');
+                if (empty($debit) && empty($credit) && $amount == 0) continue;
+                DB::table('sheet_journals')->insert([
+                    'date'         => $date,
+                    'debit_party'  => $debit,
+                    'credit_party' => $credit,
+                    'amount'       => $amount,
+                    'description'  => $desc,
+                    'created_at'   => now(),
+                    'updated_at'   => now(),
                 ]);
             }
         }
