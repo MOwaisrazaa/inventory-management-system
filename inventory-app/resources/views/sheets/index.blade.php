@@ -380,9 +380,9 @@
             <thead>
                 <tr>
                     <th width="4%">#</th>
-                    <th width="38%">From</th>
-                    <th width="22%">Status</th>
-                    <th width="22%">Amount</th>
+                    <th width="25%">From</th>
+                    <th width="37%">Description</th>
+                    <th width="20%">Amount</th>
                     <th width="6%">✓</th>
                     <th width="8%"></th>
                 </tr>
@@ -393,11 +393,7 @@
                 <tr class="saved-row">
                     <td class="text-center" style="color:#888;">{{ $i+1 }}</td>
                     <td>{{ $row->from_party }}</td>
-                    <td class="text-center">
-                        <span class="badge {{ $row->status=='received' ? 'bg-success' : 'bg-warning text-dark' }}" style="font-size:10px;">
-                            {{ ucfirst($row->status) }}
-                        </span>
-                    </td>
+                    <td style="font-size:11px; color:#555;">{{ $row->description ?? '' }}</td>
                     <td class="amt-cell">{{ number_format($row->amount,2) }}</td>
                     <td class="text-center">
                         <input type="checkbox" class="row-check" data-key="r_{{ $row->id }}" style="width:16px;height:16px;cursor:pointer;accent-color:#8e44ad;">
@@ -412,12 +408,7 @@
                 <tr class="receipt-row">
                     <td class="text-center" style="font-size:11px;color:#aaa;">{{ $receipts->count()+1 }}</td>
                     <td><input type="text" name="receipt[0][from]" class="form-control" placeholder="From..."></td>
-                    <td>
-                        <select name="receipt[0][status]" class="form-select">
-                            <option value="received">Received</option>
-                            <option value="pending">Pending</option>
-                        </select>
-                    </td>
+                    <td><input type="text" name="receipt[0][description]" class="form-control" placeholder="Description..."></td>
                     <td><input type="number" name="receipt[0][amount]" class="form-control r-amount text-end" step="0.01" min="0" value="0"></td>
                     <td class="text-center">
                         <input type="checkbox" class="new-row-check row-check" style="width:16px;height:16px;cursor:pointer;accent-color:#8e44ad;">
@@ -446,9 +437,9 @@
             <thead>
                 <tr>
                     <th width="4%">#</th>
-                    <th width="38%">To</th>
-                    <th width="22%">Status</th>
-                    <th width="22%">Amount</th>
+                    <th width="25%">To</th>
+                    <th width="37%">Description</th>
+                    <th width="20%">Amount</th>
                     <th width="6%">✓</th>
                     <th width="8%"></th>
                 </tr>
@@ -459,11 +450,7 @@
                 <tr class="saved-row">
                     <td class="text-center" style="color:#888;">{{ $i+1 }}</td>
                     <td>{{ $row->to_party }}</td>
-                    <td class="text-center">
-                        <span class="badge {{ $row->status=='paid' ? 'bg-success' : 'bg-warning text-dark' }}" style="font-size:10px;">
-                            {{ ucfirst($row->status) }}
-                        </span>
-                    </td>
+                    <td style="font-size:11px; color:#555;">{{ $row->description ?? '' }}</td>
                     <td class="amt-cell">{{ number_format($row->amount,2) }}</td>
                     <td class="text-center">
                         <input type="checkbox" class="row-check" data-key="py_{{ $row->id }}" style="width:16px;height:16px;cursor:pointer;accent-color:#e67e22;">
@@ -478,12 +465,7 @@
                 <tr class="payment-row">
                     <td class="text-center" style="font-size:11px;color:#aaa;">{{ $payments->count()+1 }}</td>
                     <td><input type="text" name="payment[0][to]" class="form-control" placeholder="To..."></td>
-                    <td>
-                        <select name="payment[0][status]" class="form-select">
-                            <option value="paid">Paid</option>
-                            <option value="pending">Pending</option>
-                        </select>
-                    </td>
+                    <td><input type="text" name="payment[0][description]" class="form-control" placeholder="Description..."></td>
                     <td><input type="number" name="payment[0][amount]" class="form-control py-amount text-end" step="0.01" min="0" value="0"></td>
                     <td class="text-center">
                         <input type="checkbox" class="new-row-check row-check" style="width:16px;height:16px;cursor:pointer;accent-color:#e67e22;">

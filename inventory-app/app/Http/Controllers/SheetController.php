@@ -112,14 +112,18 @@ class SheetController extends Controller
         // Receipt rows
         if ($request->has('receipt')) {
             foreach ($request->input('receipt') as $row) {
-                $from   = trim($row['from']   ?? '');
-                $amount = (float) ($row['amount'] ?? 0);
-                $status = $row['status'] ?? 'received';
-                // Skip if from is empty AND amount is 0
+                $from   = trim($row['from']        ?? '');
+                $desc   = trim($row['description'] ?? '');
+                $amount = (float) ($row['amount']  ?? 0);
                 if (empty($from) && $amount == 0) continue;
                 DB::table('sheet_receipts')->insert([
-                    'date' => $date, 'from_party' => $from, 'status' => $status,
-                    'amount' => $amount, 'created_at' => now(), 'updated_at' => now(),
+                    'date'        => $date,
+                    'from_party'  => $from,
+                    'status'      => 'received',
+                    'description' => $desc,
+                    'amount'      => $amount,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
                 ]);
             }
         }
@@ -127,14 +131,18 @@ class SheetController extends Controller
         // Payment rows
         if ($request->has('payment')) {
             foreach ($request->input('payment') as $row) {
-                $to     = trim($row['to']     ?? '');
-                $amount = (float) ($row['amount'] ?? 0);
-                $status = $row['status'] ?? 'paid';
-                // Skip if to is empty AND amount is 0
+                $to     = trim($row['to']          ?? '');
+                $desc   = trim($row['description'] ?? '');
+                $amount = (float) ($row['amount']  ?? 0);
                 if (empty($to) && $amount == 0) continue;
                 DB::table('sheet_payments')->insert([
-                    'date' => $date, 'to_party' => $to, 'status' => $status,
-                    'amount' => $amount, 'created_at' => now(), 'updated_at' => now(),
+                    'date'        => $date,
+                    'to_party'    => $to,
+                    'status'      => 'paid',
+                    'description' => $desc,
+                    'amount'      => $amount,
+                    'created_at'  => now(),
+                    'updated_at'  => now(),
                 ]);
             }
         }
