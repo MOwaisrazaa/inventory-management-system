@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Customer;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +15,9 @@ class SheetController extends Controller
     {
         $date = $request->get('date', date('Y-m-d'));
 
-        $items = Item::all();
+        $items     = Item::all();
+        $vendors   = Vendor::orderBy('name')->get();
+        $customers = Customer::orderBy('name')->get();
 
         // Saved purchases for this date
         $purchases = DB::table('sheet_purchases')
@@ -51,7 +55,7 @@ class SheetController extends Controller
         $nextDate = $allDates->filter(fn($d) => $d > $date)->first();
 
         return view('sheets.index', compact(
-            'date', 'items',
+            'date', 'items', 'vendors', 'customers',
             'purchases', 'sales', 'receipts', 'payments',
             'prevDate', 'nextDate'
         ));

@@ -201,6 +201,18 @@
 @csrf
 <input type="hidden" name="date" value="{{ $date }}">
 
+{{-- Datalists for vendor/customer autocomplete --}}
+<datalist id="vendor-list">
+    @foreach($vendors as $v)
+        <option value="{{ $v->name }}">
+    @endforeach
+</datalist>
+<datalist id="customer-list">
+    @foreach($customers as $c)
+        <option value="{{ $c->name }}">
+    @endforeach
+</datalist>
+
 {{-- ── TOP: Purchase (left) + Sales (right) ─────────────── --}}
 <div class="row g-3">
 
@@ -247,7 +259,7 @@
                     <td class="text-center" style="font-size:11px;color:#aaa;">{{ $purchases->count()+1 }}</td>
                     <td>
                         <input type="text" name="purchase[0][vendor_name]" class="form-control p-vendor"
-                               placeholder="Vendor name..." autocomplete="off">
+                               list="vendor-list" placeholder="Vendor name..." autocomplete="off">
                     </td>
                     <td>
                         <select name="purchase[0][item_id]" class="form-select p-item">
@@ -321,7 +333,7 @@
                     <td class="text-center" style="font-size:11px;color:#aaa;">{{ $sales->count()+1 }}</td>
                     <td>
                         <input type="text" name="sale[0][customer_name]" class="form-control s-customer"
-                               placeholder="Customer name..." autocomplete="off">
+                               list="customer-list" placeholder="Customer name..." autocomplete="off">
                     </td>
                     <td>
                         <select name="sale[0][item_id]" class="form-select s-item">
