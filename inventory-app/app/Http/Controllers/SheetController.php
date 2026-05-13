@@ -39,29 +39,21 @@ class SheetController extends Controller
         $payments = DB::table('sheet_payments')
             ->where('date', $date)->orderBy('id')->get();
 
-        // Previous date that has any data (most recent date BEFORE current)
-        $allDates = DB::table('sheet_purchases')->select('date')
+        // All dates that have any data
+        $allDatesQuery = DB::table('sheet_purchases')->select('date')
             ->union(DB::table('sheet_sales')->select('date'))
             ->union(DB::table('sheet_receipts')->select('date'))
             ->union(DB::table('sheet_payments')->select('date'));
 
-        $prevDate = DB::table(DB::raw("({$allDates->toSql()}) as all_dates"))
-            ->mergeBindings($allDates)
-            ->where('date', '<', $date)
-            ->orderBy('date', 'desc')
-            ->value('date');
+        $allDates = DB::table(DB::raw("({$allDatesQuery->toSql()}) as d"))
+            ->mergeBindings($allDatesQuery)
+            ->pluck('date')
+            ->unique()
+            ->sort()
+            ->values();
 
-        // Next date that has any data (earliest date AFTER current)
-        $allDates2 = DB::table('sheet_purchases')->select('date')
-            ->union(DB::table('sheet_sales')->select('date'))
-            ->union(DB::table('sheet_receipts')->select('date'))
-            ->union(DB::table('sheet_payments')->select('date'));
-
-        $nextDate = DB::table(DB::raw("({$allDates2->toSql()}) as all_dates"))
-            ->mergeBindings($allDates2)
-            ->where('date', '>', $date)
-            ->orderBy('date', 'asc')
-            ->value('date');
+        $prevDate = $allDates->filter(fn($d) => $d < $date)->last();
+        $nextDate = $allDates->filter(fn($d) => $d > $date)->first();
 
         return view('sheets.index', compact(
             'date', 'items',
