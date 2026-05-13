@@ -39,18 +39,13 @@ class SheetController extends Controller
         $payments = DB::table('sheet_payments')
             ->where('date', $date)->orderBy('id')->get();
 
-        // All dates that have any data
-        $allDatesQuery = DB::table('sheet_purchases')->select('date')
-            ->union(DB::table('sheet_sales')->select('date'))
-            ->union(DB::table('sheet_receipts')->select('date'))
-            ->union(DB::table('sheet_payments')->select('date'));
+        // All dates that have any data - simple approach
+        $p = DB::table('sheet_purchases')->distinct()->pluck('date')->toArray();
+        $s = DB::table('sheet_sales')->distinct()->pluck('date')->toArray();
+        $r = DB::table('sheet_receipts')->distinct()->pluck('date')->toArray();
+        $py = DB::table('sheet_payments')->distinct()->pluck('date')->toArray();
 
-        $allDates = DB::table(DB::raw("({$allDatesQuery->toSql()}) as d"))
-            ->mergeBindings($allDatesQuery)
-            ->pluck('date')
-            ->unique()
-            ->sort()
-            ->values();
+        $allDates = collect(array_unique(array_merge($p, $s, $r, $py)))->sort()->values();
 
         $prevDate = $allDates->filter(fn($d) => $d < $date)->last();
         $nextDate = $allDates->filter(fn($d) => $d > $date)->first();
